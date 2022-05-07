@@ -59,7 +59,6 @@ object MovieReader extends App {
     val itemText = Source.fromFile(itemFile,"windows-1250")
     var movieArray = new ArrayBuffer[MovieEntry]()
 
-
     for (line <- itemText.getLines()) {
       var index = ""
       var title = ""
