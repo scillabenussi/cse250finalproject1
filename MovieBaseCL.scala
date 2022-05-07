@@ -1,5 +1,5 @@
 /**
- *read in the movies and store them in an array buffer
+ *read in the movies and store them in an array buffer Connor Lehr CSE 250
  */
 
 import java.io.{FileWriter, PrintWriter}
