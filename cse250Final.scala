@@ -39,6 +39,7 @@ object cse250Final extends App{
       fantasyRating = List()
       historyRating = List()
       val currentMovieGenre = movies(movie_ratings.movie_id.toInt-1)
+
     }
   }
 }
