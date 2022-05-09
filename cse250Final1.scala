@@ -1,8 +1,6 @@
-/** File cse250Final.scala by Scilla Benussi and Connor Lehr
- * This file classes and methods created in the file MovieBaseCL and UserBaseSB
- * to evaluate the averages and factors listed in the handout for the Final project
+/** File cse250Final1.scala
+ * This file will facilitate the collaboration
  */
-
 import java.io.{FileWriter, PrintWriter}
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
@@ -39,5 +37,11 @@ object cse250Final extends App{
       historyRating = List()
       val currentMovieGenre = movies(movie_ratings.movie_id.toInt-1)
     }
+  }
+
+  def pref_fact(genreBox: GenreBox): GenreBox = {
+    var prefBox: GenreBox = new GenreBox
+    //description
+    prefBox
   }
 }

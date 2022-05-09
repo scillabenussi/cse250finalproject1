@@ -3,20 +3,24 @@
  */
 import scala.collection.mutable
 import scala.io.Source
+
 /**
  * @param user_id is the id of the user in the u.data file
  * @param rated_movies is Movie_ratings object
  */
+
 case class User(user_id: String, rated_movies: Movie_ratings)
+
 /**
  * @param movie_id is the id of the movie in the u.data file
  * @param rating is the id of the user in the u.data file
  */
+
 case class Movie_ratings(movie_id: String, rating: Double)
 //We'll use ISR classes for the whole users+their ratings database
 class UserBox extends Cardbox[User]((x,y) => x.user_id.compareTo(y.user_id)) {}
 
-object UserReaders{
+object UserReaders {
   //readEntries method reads the u.data file and creates the userbox, a Cardbox of all the user_ids, with all their related movie_ratings
   def readEntries: (UserBox, mutable.Map[String, Array[Double]]) = {
     val userFile = "u.data" //Use fixed version of the file
@@ -62,7 +66,7 @@ object UserReaders{
 }
 
 /** Executable object to test the code */
-object UserBaseSB extends App{
+object UserBaseSB extends App {
   val tuple = UserReaders.readEntries
   var userdatabase = tuple._1
   var movie_rating = tuple._2

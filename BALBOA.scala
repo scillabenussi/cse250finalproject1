@@ -149,7 +149,6 @@ class BALBOA[A](keyComp: (A,A) => Int) extends ISR[A] { Outer =>     //uses Sort
   def size = _size
 
   //override def isEmpty = (_size <= 0)
-
   //override def ++=(other: ISR[A]): Unit
   //Appending whole sequences  is now majorly dubious given the sortedness
   //invariant, so skip & ignore.
@@ -162,6 +161,4 @@ class BALBOA[A](keyComp: (A,A) => Int) extends ISR[A] { Outer =>     //uses Sort
     ret += "" + (theList.length-1) + "-->" + theList(theList.length-1).length + " end sentinel"
     ret
   }
-
-
 }
