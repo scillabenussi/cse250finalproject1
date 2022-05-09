@@ -1,13 +1,11 @@
-/**
- *read in the movies and store them in an array buffer Connor Lehr CSE 250
+/** File MovieBaseCL.scala created by Connor Lehr for CSE250, Spring 2022
+ *  Final Project, due date: May 13th, Midnight stretchy
+ *  Read in the movies and store them in an ArrayBuffer
  */
-
-import java.io.{FileWriter, PrintWriter}
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 /**
- *
  * @param index is the index at which the movie was found
  * @param title is title given
  * @param year is year based off the date given (not one given in the title)
@@ -21,7 +19,6 @@ object MovieReader extends App {
    * genres.
    */
   val genreFile = "u.genre"
-
   val genreText = Source.fromFile(genreFile, "windows-1250")
   var genreMap: Map[String, String] = Map()
   for (line <- genreText.getLines()) {
