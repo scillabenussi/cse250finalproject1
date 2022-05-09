@@ -28,109 +28,107 @@
     (4) The "null.asInstanceOf" with the sentinel nodes saves the text's extra syntax on p421.
  */
 class SortedSLL[A](keyComp: (A,A) => Int) extends ISR[A] { Outer =>     //changed from SLLISR.scala
-   protected class Node(var item: A, var next: Node)
-   private val endSentinel = new Node(null.asInstanceOf[A],null)
-   private val headSentinel = new Node(null.asInstanceOf[A],endSentinel)
-   private var _size = 0
+  protected class Node(var item: A, var next: Node)
+  private val endSentinel = new Node(null.asInstanceOf[A],null)
+  private val headSentinel = new Node(null.asInstanceOf[A],endSentinel)
+  private var _size = 0
 
 
-   /** Iter adds three methods to standard Scala next() and hasNext for iterators.
+  /** Iter adds three methods to standard Scala next() and hasNext for iterators.
        INV: Iterator is attached to the node prior to the item it designates
-    */
-   class Iter(var preat: Node) extends Iterator[A] {
+   */
+  class Iter(var preat: Node) extends Iterator[A] {
 
-      /** Special Scala syntax allows using just parens to return the data item.
-       */
-      def apply(): A = {
-         assert(hasNext, "Attempt to fetch item past end in SortedSLL\n" + Outer.diagnosticString)
-         return preat.next.item
-      }
+    /** Special Scala syntax allows using just parens to return the data item.
+     */
+    def apply(): A = {
+      assert(hasNext, "Attempt to fetch item past end in SortedSLL\n" + Outer.diagnosticString)
+      return preat.next.item
+    }
 
-      def next(): A = {
-         assert(hasNext, "Attempt to advance past end in SortedSLL\n" + Outer.diagnosticString)
-         preat = preat.next
-         return preat.item
-      }
+    def next(): A = {
+      assert(hasNext, "Attempt to advance past end in SortedSLL\n" + Outer.diagnosticString)
+      preat = preat.next
+      return preat.item
+    }
 
-      def hasNext: Boolean = (preat != endSentinel && preat.next != endSentinel)
+    def hasNext: Boolean = (preat != endSentinel && preat.next != endSentinel)
 
-      def update(newItem: A) = {
-         assert(hasNext, "Attempt to update item past end in SortedSLL\n" + Outer.diagnosticString)
-         preat.next.item = newItem
-      }
+    def update(newItem: A) = {
+      assert(hasNext, "Attempt to update item past end in SortedSLL\n" + Outer.diagnosticString)
+      preat.next.item = newItem
+    }
 
-      def equals(other: Iter): Boolean = { preat == other.preat }
-   }
+    def equals(other: Iter): Boolean = { preat == other.preat }
+  }
 
-   //Public Implementation of ISR Trait---sorting and keyComp don't change this.
+  //Public Implementation of ISR Trait---sorting and keyComp don't change this.
 
-   type I = Iter
+  type I = Iter
 
-   def begin = new Iter(headSentinel)  //is "at" the first item
-   def end: Iter = {  //rather than maintain "penult" field, spend O(n) time in SLL
-      var itr = begin
-      while (itr.hasNext) itr.next()
-      return itr
-   }
-      
-   def insertBefore(item: A, loc: Iter): Iter = {
-      loc.preat.next = new Node(item, loc.preat.next)
-      _size += 1
-      return loc
-   }
-   /** REQuires (but doesn't test or enforce) that 
+  def begin = new Iter(headSentinel)  //is "at" the first item
+  def end: Iter = {  //rather than maintain "penult" field, spend O(n) time in SLL
+    var itr = begin
+    while (itr.hasNext) itr.next()
+    return itr
+  }
+
+  def insertBefore(item: A, loc: Iter): Iter = {
+    loc.preat.next = new Node(item, loc.preat.next)
+    _size += 1
+    return loc
+  }
+  /** REQuires (but doesn't test or enforce) that
        keyComp(preat.item, item) <= 0 && keyComp(item,preat.next.item) <= 0.
        Safe usage is to call insert(item,findPlace(item)).
-    */
-   def insert(item: A, loc: Iter): Iter = insertBefore(item, loc)
-   def insert(item: A): Iter = insert(item,findPlace(item))
+   */
+  def insert(item: A, loc: Iter): Iter = insertBefore(item, loc)
+  def insert(item: A): Iter = insert(item,findPlace(item))
 
-   /** Cannot violate the CLASS INV, so OK to use freely.
-    */
-   def remove(loc: Iter): A = {
-      assert(loc.hasNext, "Attempt to remove past-end item")
-      val tmp = loc.preat.next.item
-      loc.preat.next = loc.preat.next.next
-      _size -= 1
-      return tmp
-   }
-   def remove(item: A): A = {
-      val itr = find(item)
-      assert(itr.hasNext, "Attempt to remove non-found item " + item + " in SLL\n" + diagnosticString)
-      return remove(itr)
-   }
+  /** Cannot violate the CLASS INV, so OK to use freely.
+   */
+  def remove(loc: Iter): A = {
+    assert(loc.hasNext, "Attempt to remove past-end item")
+    val tmp = loc.preat.next.item
+    loc.preat.next = loc.preat.next.next
+    _size -= 1
+    return tmp
+  }
+  def remove(item: A): A = {
+    val itr = find(item)
+    assert(itr.hasNext, "Attempt to remove non-found item " + item + " in SLL\n" + diagnosticString)
+    return remove(itr)
+  }
 
-   def findPlace(item: A, from: Iter = begin): Iter = {
-      var itr = from
-      while (itr.hasNext && keyComp(item, itr()) > 0) {  
-         itr.next()
-      }
-      //println("From " + item + ", SLL found " + (if (itr.hasNext) itr() else "end"))
-      return itr
-   }
-   def find(item: A): Iter = {
-      val itr = findPlace(item)
-      if (isEmpty || (itr.hasNext && keyComp(item, itr()) == 0)) return itr else return end
-   }
+  def findPlace(item: A, from: Iter = begin): Iter = {
+    var itr = from
+    while (itr.hasNext && keyComp(item, itr()) > 0) {
+      itr.next()
+    }
+    //println("From " + item + ", SLL found " + (if (itr.hasNext) itr() else "end"))
+    return itr
+  }
+  def find(item: A): Iter = {
+    val itr = findPlace(item)
+    if (isEmpty || (itr.hasNext && keyComp(item, itr()) == 0)) return itr else return end
+  }
 
-   def size = _size
+  def size = _size
 
-   //override def isEmpty = (_size <= 0)
+  //override def isEmpty = (_size <= 0)
 
-   //override def ++=(other: ISR[A]): Unit   
-   //Appending whole sequences  is now majorly dubious given the sortedness
-   //invariant, so skip & ignore.
+  //override def ++=(other: ISR[A]): Unit
+  //Appending whole sequences  is now majorly dubious given the sortedness
+  //invariant, so skip & ignore.
 
-   def diagnosticString = {
-      var itr = begin
-      var ret = "head sentinel: " + headSentinel + "\n"
-      while (itr.hasNext) {
-         ret += "" + itr.preat.next + ": " + itr.next() + "\n"
-      }
-      ret += "end sentinel: " + endSentinel + "\n"
-      ret
-   }
+  def diagnosticString = {
+    var itr = begin
+    var ret = "head sentinel: " + headSentinel + "\n"
+    while (itr.hasNext) {
+      ret += "" + itr.preat.next + ": " + itr.next() + "\n"
+    }
+    ret += "end sentinel: " + endSentinel + "\n"
+    ret
+  }
 
 }
-
-   

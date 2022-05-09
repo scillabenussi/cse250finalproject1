@@ -1,4 +1,7 @@
-
+/** File cse250Final.scala by Scilla Benussi and Connor Lehr
+ * This file classes and methods created in the file MovieBaseCL and UserBaseSB
+ * to evaluate the averages and factors listed in the handout for the Final project
+ */
 
 import java.io.{FileWriter, PrintWriter}
 import scala.collection.mutable.ArrayBuffer
