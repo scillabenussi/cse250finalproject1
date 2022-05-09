@@ -88,4 +88,34 @@ object cse250Final extends App {
 
   genreBox
   }
+  def R_g: Array[(String,Double)] ={
+    val users = userdatabase.begin
+    var actionRating: List[Double] = List()
+    var noirRating: List[Double] = List()
+    var lightRating: List[Double] = List()
+    var seriousRating: List[Double] = List()
+    var fantasyRating: List[Double] = List()
+    var historyRating: List[Double] = List()
+    while(users.hasNext){
+      val user = users.next()
+      val movie_ratings = user.rated_movies
+      val currentMovie = movies(movie_ratings.movie_id.toInt - 1)
+      if(currentMovie.genres == "Action"){
+        actionRating :+= movie_ratings.rating
+      }else if(currentMovie.genres == "Noir"){
+        noirRating :+= movie_ratings.rating
+      }else if(currentMovie.genres == "Light"){
+        lightRating :+= movie_ratings.rating
+      }else if(currentMovie.genres == "Serious"){
+        seriousRating :+= movie_ratings.rating
+      }else if(currentMovie.genres == "Fantasy"){
+        fantasyRating :+= movie_ratings.rating
+      }else if(currentMovie.genres == "History"){
+        historyRating :+= movie_ratings.rating
+      }
+    }
+    val returnArray: Array[(String,Double)] = Array(("Action",actionRating.sum/actionRating.length),("Nior",noirRating.sum/noirRating.length),("Light",lightRating.sum/lightRating.length),
+      ("Serious",seriousRating.sum/seriousRating.length),("Fantasy",fantasyRating.sum/fantasyRating.length),("History",historyRating.sum/historyRating.length))
+  returnArray
+  }
 }
