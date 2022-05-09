@@ -30,12 +30,14 @@ object cse250Final extends App{
   var historyRating: List[Double] = List()
 
   while(users.hasNext){
+
     val user = users.next()
     val user_id = user.user_id
     val movie_ratings = user.rated_movies
     val currentMovie = movies(movie_ratings.movie_id.toInt-1)
-    if(user_id != currentUser){
-      if(currentUser != "") {
+
+    if(user_id != currentUser) {
+      if (currentUser != "") {
         if (!actionRating.isEmpty) {
           genreBox.insert(UserGenreRating(currentUser, "Action", actionRating.sum / actionRating.length))
         }
@@ -63,44 +65,23 @@ object cse250Final extends App{
       fantasyRating = List()
       historyRating = List()
 
-      for(genre <- currentMovie.genres){
-        if(genre == "Action"){
-          actionRating :+= movie_ratings.rating
-        }else if(genre == "Noir"){
-          noirRating :+= movie_ratings.rating
-        }else if(genre == "List"){
-          lightRating :+= movie_ratings.rating
-        }else if(genre == "Serious"){
-          seriousRating :+= movie_ratings.rating
-        }else if(genre == "Fantasy"){
-          fantasyRating :+= movie_ratings.rating
-        }else if(genre == "History"){
-          historyRating :+= movie_ratings.rating
-        }
-      }
-    }else {
-      for(genre <- currentMovie.genres){
-        if(genre == "Action"){
-          actionRating :+= movie_ratings.rating
-        }else if(genre == "Noir"){
-          noirRating :+= movie_ratings.rating
-        }else if(genre == "List"){
-          lightRating :+= movie_ratings.rating
-        }else if(genre == "Serious"){
-          seriousRating :+= movie_ratings.rating
-        }else if(genre == "Fantasy"){
-          fantasyRating :+= movie_ratings.rating
-        }else if(genre == "History"){
-          historyRating :+= movie_ratings.rating
-
-        }
-      }
     }
-  }
+      for(genre <- currentMovie.genres){
+        if(genre == "Action"){
+          actionRating :+= movie_ratings.rating
+        }else if(genre == "Noir"){
+          noirRating :+= movie_ratings.rating
+        }else if(genre == "Light"){
+          lightRating :+= movie_ratings.rating
+        }else if(genre == "Serious"){
+          seriousRating :+= movie_ratings.rating
+        }else if(genre == "Fantasy"){
+          fantasyRating :+= movie_ratings.rating
+        }else if(genre == "History"){
+          historyRating :+= movie_ratings.rating
 
-  for(item <-genreBox.toList){
-
-    println(item)
+        }
+      }
   }
 
 
