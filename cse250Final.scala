@@ -11,12 +11,13 @@ case class UserGenreRating(user: String, genre: String, ratingAvg: Double)
 class GenreBox extends Cardbox[UserGenreRating]((x,y) => x.user.compareTo(y.user))
 
 object cse250Final extends App {
+  val userTuple = UserReaders.readEntries
+  val movies: ArrayBuffer[MovieEntry] = MovieReader.readMovies
+  val userdatabase = userTuple._1
   def U_g: GenreBox = {
     var genreBox = new GenreBox
 
-    val userTuple = UserReaders.readEntries
-    val movies: ArrayBuffer[MovieEntry] = MovieReader.readMovies
-    val userdatabase = userTuple._1
+
 
     var genreRatings = new GenreBox
     var users = userdatabase.begin
