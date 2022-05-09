@@ -3,6 +3,7 @@
  *  Read in the movies and store them in an ArrayBuffer
  */
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable
 import scala.io.Source
 
 /**
@@ -13,14 +14,14 @@ import scala.io.Source
  */
 case class MovieEntry (index: String, title: String,year:String, genres: Set[String])
 
-object MovieReader extends App {
+object MovieReader {
   /**
    * First part of the object reads in the genres and forms them into a map, mapping the genre listed to our condensed
    * genres.
    */
   val genreFile = "u.genre"
   val genreText = Source.fromFile(genreFile, "windows-1250")
-  var genreMap: Map[String, String] = Map()
+  var genreMap: mutable.Map[String, String] = mutable.Map()
   for (line <- genreText.getLines()) {
     val lineList = line.split('|').toList
     if (lineList.length > 1) { //ignore lines with no data
@@ -53,7 +54,7 @@ object MovieReader extends App {
    */
   def readMovies: ArrayBuffer[MovieEntry] = {
     val itemFile = "u.item"
-    val itemText = Source.fromFile(itemFile,"windows-1250")
+    val itemText = Source.fromFile(itemFile, "windows-1250")
     var movieArray = new ArrayBuffer[MovieEntry]()
 
     for (line <- itemText.getLines()) {
@@ -75,18 +76,17 @@ object MovieReader extends App {
             }
             i += 1
           }
-          println(s"index: $index title: $title year: $year genres: $genres")
+
           movieArray :+= MovieEntry(index, title, year, genres)
         }
+        else { //if it is unknown
+          movieArray :+= MovieEntry(index, lineArray(1), year, Set(genreMap("0")))
+        }
       }
-      else{ //if it is unknown
-        println(s"index: $index title: $title year: $year genres: $genres")
-        movieArray :+= MovieEntry(index, lineArray(1), year, Set(genreMap("0")))
-      }
+
     }
     movieArray
   }
-  readMovies
 }
 
 /**

@@ -11,12 +11,15 @@ case class UserGenreRating(user: String, genre: String, ratingAvg: Double)
 class GenreBox extends Cardbox[UserGenreRating]((x,y) => x.user.compareTo(y.user))
 
 object cse250Final extends App{
-  val movies: ArrayBuffer[MovieEntry] = MovieReader.readMovies
+  var genreBox = new GenreBox
+
   val userTuple = UserReaders.readEntries
+  val movies: ArrayBuffer[MovieEntry] = MovieReader.readMovies
   val userdatabase = userTuple._1
 
   var genreRatings = new GenreBox
   var users = userdatabase.begin
+
 
   var currentUser = ""
   var actionRating: List[Double] = List()
@@ -30,14 +33,75 @@ object cse250Final extends App{
     val user = users.next()
     val user_id = user.user_id
     val movie_ratings = user.rated_movies
+    val currentMovie = movies(movie_ratings.movie_id.toInt-1)
     if(user_id != currentUser){
+      if(currentUser != "") {
+        if (!actionRating.isEmpty) {
+          genreBox.insert(UserGenreRating(currentUser, "Action", actionRating.sum / actionRating.length))
+        }
+        if (!noirRating.isEmpty) {
+          genreBox.insert(UserGenreRating(currentUser, "Noir", noirRating.sum / noirRating.length))
+        }
+        if (!lightRating.isEmpty) {
+          genreBox.insert(UserGenreRating(currentUser, "Light", lightRating.sum / lightRating.length))
+        }
+        if (!seriousRating.isEmpty) {
+          genreBox.insert(UserGenreRating(currentUser, "Serious", seriousRating.sum / seriousRating.length))
+        }
+        if (!fantasyRating.isEmpty) {
+          genreBox.insert(UserGenreRating(user_id, "Fantasy", fantasyRating.sum / fantasyRating.length))
+        }
+        if (!historyRating.isEmpty) {
+          genreBox.insert(UserGenreRating(user_id, "History", historyRating.sum / historyRating.length))
+        }
+      }
+      currentUser = user_id
       actionRating = List()
       noirRating = List()
       lightRating = List()
       seriousRating = List()
       fantasyRating = List()
       historyRating = List()
-      val currentMovieGenre = movies(movie_ratings.movie_id.toInt-1)
+
+      for(genre <- currentMovie.genres){
+        if(genre == "Action"){
+          actionRating :+= movie_ratings.rating
+        }else if(genre == "Noir"){
+          noirRating :+= movie_ratings.rating
+        }else if(genre == "List"){
+          lightRating :+= movie_ratings.rating
+        }else if(genre == "Serious"){
+          seriousRating :+= movie_ratings.rating
+        }else if(genre == "Fantasy"){
+          fantasyRating :+= movie_ratings.rating
+        }else if(genre == "History"){
+          historyRating :+= movie_ratings.rating
+        }
+      }
+    }else {
+      for(genre <- currentMovie.genres){
+        if(genre == "Action"){
+          actionRating :+= movie_ratings.rating
+        }else if(genre == "Noir"){
+          noirRating :+= movie_ratings.rating
+        }else if(genre == "List"){
+          lightRating :+= movie_ratings.rating
+        }else if(genre == "Serious"){
+          seriousRating :+= movie_ratings.rating
+        }else if(genre == "Fantasy"){
+          fantasyRating :+= movie_ratings.rating
+        }else if(genre == "History"){
+          historyRating :+= movie_ratings.rating
+
+        }
+      }
     }
   }
+
+  for(item <-genreBox.toList){
+
+    println(item)
+  }
+
+
 }
