@@ -7,6 +7,7 @@ import scala.collection.mutable.ArrayBuffer
 import scala.collection.mutable.Map
 import scala.io.Source
 
+
 case class User(user_id: String, rated_movies: Movie_ratings)
 case class Movie_ratings(movie_id: String, rating: Double)
 //We'll use ISR classes for the whole users+their ratings database
@@ -63,7 +64,7 @@ object UserBaseSB extends App{
     println(ratings.toList)
   }*/
   val r_m_map = UserReaders.average(movie_rating)
-  for((key,av)<-r_m_map){
+  /*for((key,av)<-r_m_map){
     println(av)
-  }
+  }*/
 }
