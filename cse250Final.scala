@@ -6,7 +6,7 @@
 import java.io.{FileWriter, PrintWriter}
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
-case class UserGenreRating(user: String, genre: String, ratin: Double)
+case class UserGenreRating(user: String, genre: String, rating: Double)
 
 class GenreBox extends Cardbox[UserGenreRating]((x,y) => x.user.compareTo(y.user))
 
