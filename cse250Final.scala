@@ -98,17 +98,18 @@ object cse250Final extends App {
       val user = users.next()
       val movie_ratings = user.rated_movies
       val currentMovie = movies(movie_ratings.movie_id.toInt - 1)
-      if(currentMovie.genres == "Action"){
+      if(currentMovie.genres.contains("Action")){
         actionRating :+= movie_ratings.rating
-      }else if(currentMovie.genres == "Noir"){
+      }else if(currentMovie.genres.contains("Noir")){
         noirRating :+= movie_ratings.rating
-      }else if(currentMovie.genres == "Light"){
+      }else if(currentMovie.genres.contains("Light")){
         lightRating :+= movie_ratings.rating
-      }else if(currentMovie.genres == "Serious"){
+      }else if(currentMovie.genres.contains("Serious")){
         seriousRating :+= movie_ratings.rating
-      }else if(currentMovie.genres == "Fantasy"){
+      }else if(currentMovie.genres.contains("Fantasy")){
         fantasyRating :+= movie_ratings.rating
-      }else if(currentMovie.genres == "History"){        historyRating :+= movie_ratings.rating
+      }else if(currentMovie.genres.contains("History")){
+        historyRating :+= movie_ratings.rating
       }
     }
     val returnMap: Map[String,Double] = Map(("Action"->actionRating.sum/actionRating.length),("Nior"->noirRating.sum/noirRating.length),("Light"->lightRating.sum/lightRating.length),
