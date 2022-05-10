@@ -4,7 +4,7 @@
  */
 
 import java.io.{FileWriter, PrintWriter}
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable
 import scala.io.Source
 case class UserGenreRating(user: String, genre: String, ratingAvg: Double)
 
@@ -12,14 +12,16 @@ class GenreBox extends Cardbox[UserGenreRating]((x,y) => x.user.compareTo(y.user
 
 object cse250Final extends App {
   val userTuple = UserReaders.readEntries
-  val movies: ArrayBuffer[MovieEntry] = MovieReader.readMovies
+  val movies: mutable.ArrayBuffer[MovieEntry] = MovieReader.readMovies
   val userdatabase = userTuple._1
+  val ratingsDatabase = userTuple._2
+  val ratingAvg = UserReaders.average(ratingsDatabase)
+  val userBoxGen: GenreBox = U_g
+  val prefBox: GenreBox = pref_fact
+
   def U_g: GenreBox = {
-    var genreBox = new GenreBox
-
-    var users = userdatabase.begin
-
-
+    val genreBox = new GenreBox
+    val users = userdatabase.begin
     var currentUser = ""
     var actionRating: List[Double] = List()
     var noirRating: List[Double] = List()
@@ -82,10 +84,9 @@ object cse250Final extends App {
         }
       }
     }
-
-  genreBox
+    genreBox
   }
-  def R_g: Array[(String,Double)] ={
+  def R_g: Map[String,Double] ={
     val users = userdatabase.begin
     var actionRating: List[Double] = List()
     var noirRating: List[Double] = List()
@@ -97,23 +98,34 @@ object cse250Final extends App {
       val user = users.next()
       val movie_ratings = user.rated_movies
       val currentMovie = movies(movie_ratings.movie_id.toInt - 1)
-      if(currentMovie.genres.contains("Action")){
+      if(currentMovie.genres == "Action"){
         actionRating :+= movie_ratings.rating
-      }else if(currentMovie.genres.contains("Noir")){
+      }else if(currentMovie.genres == "Noir"){
         noirRating :+= movie_ratings.rating
-      }else if(currentMovie.genres.contains("Light")){
+      }else if(currentMovie.genres == "Light"){
         lightRating :+= movie_ratings.rating
-      }else if(currentMovie.genres.contains("Serious")){
+      }else if(currentMovie.genres == "Serious"){
         seriousRating :+= movie_ratings.rating
-      }else if(currentMovie.genres.contains("Fantasy")){
+      }else if(currentMovie.genres == "Fantasy"){
         fantasyRating :+= movie_ratings.rating
-      }else if(currentMovie.genres.contains("History")){
-        historyRating :+= movie_ratings.rating
+      }else if(currentMovie.genres == "History"){        historyRating :+= movie_ratings.rating
       }
     }
-    val returnArray: Array[(String,Double)] = Array(("Action",actionRating.sum/actionRating.length),("Nior",noirRating.sum/noirRating.length),("Light",lightRating.sum/lightRating.length),
-      ("Serious",seriousRating.sum/seriousRating.length),("Fantasy",fantasyRating.sum/fantasyRating.length),("History",historyRating.sum/historyRating.length))
-  returnArray
+    val returnMap: Map[String,Double] = Map(("Action"->actionRating.sum/actionRating.length),("Nior"->noirRating.sum/noirRating.length),("Light"->lightRating.sum/lightRating.length),
+      ("Serious"->seriousRating.sum/seriousRating.length),("Fantasy"->fantasyRating.sum/fantasyRating.length),("History"->historyRating.sum/historyRating.length))
+    returnMap
 
+  }
+
+  def pref_fact: GenreBox = {
+    val prefFactBox: GenreBox = new GenreBox //Output GenreBox
+    val userGenItr = userBoxGen.begin //Iterator to input GenreBox
+    val r_g: Map[String, Double] = R_g
+    while(userGenItr.hasNext){
+      val currentUser: UserGenreRating = userGenItr.next()
+      val newGenreRating: UserGenreRating = UserGenreRating(currentUser.user, currentUser.genre, currentUser.ratingAvg/r_g(currentUser.genre))
+      prefFactBox.insert(newGenreRating)
+    }
+    prefFactBox
   }
 }
