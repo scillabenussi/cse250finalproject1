@@ -114,5 +114,6 @@ object cse250Final extends App {
     val returnArray: Array[(String,Double)] = Array(("Action",actionRating.sum/actionRating.length),("Nior",noirRating.sum/noirRating.length),("Light",lightRating.sum/lightRating.length),
       ("Serious",seriousRating.sum/seriousRating.length),("Fantasy",fantasyRating.sum/fantasyRating.length),("History",historyRating.sum/historyRating.length))
   returnArray
+
   }
 }
