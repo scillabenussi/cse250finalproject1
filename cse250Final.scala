@@ -5,6 +5,7 @@
 
 import java.io.{FileWriter, PrintWriter}
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 case class UserGenreRating(user: String, genre: String, ratingAvg: Double)
 
@@ -128,5 +129,12 @@ object cse250Final extends App {
       prefFactBox.insert(newGenreRating)
     }
     prefFactBox
+  }
+
+  def top_n(n : Int): ArrayBuffer[MovieEntry] = {
+    var n_movies: ArrayBuffer[MovieEntry] = ArrayBuffer[MovieEntry]()
+
+
+    n_movies
   }
 }
