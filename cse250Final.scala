@@ -21,13 +21,17 @@ object cse250Final extends App {
   val userBoxGen: GenreBox = U_g
   val prefBox: GenreBox = pref_fact
   val moviesForUsers = mov_per_user_genre
+  val outp = new PrintWriter(new FileWriter("output.txt",false));  //appends
   /*for(user <- moviesForUsers.keys) {
     var itr = moviesForUsers(user).begin
     while (itr.hasNext) {
       println(user + " -> " + itr.next()._2)
     }
   }*/
-  //val nMoviesForUser: ArrayBuffer[MovieEntry] = top_n("2","History", 10)
+  val chosenUserId: String = "30"
+  val chosenGenre: String = "Light"
+  val chosenN: Int = 10
+  val nMoviesForUser: ArrayBuffer[MovieEntry] = top_n(chosenUserId,chosenGenre,chosenN)
   /*for(movies <- nMoviesForUser){
     println("1 -> " + movies.title)
   }*/
@@ -169,17 +173,33 @@ object cse250Final extends App {
 
   def top_n(userID: String, genre: String, n : Int): ArrayBuffer[MovieEntry] = {
     var nMovies: ArrayBuffer[MovieEntry] = new ArrayBuffer[MovieEntry]()
+    var count = 1
+    if(userID.toInt >943){
+      println("User Not Found")
+      return nMovies
+    }
+    if(genre!="Action" && genre!= "Noir" && genre!= "Light" && genre!= "Serious" && genre!= "Fantasy" && genre!= "History"){
+      println("Genre Not Found")
+      return nMovies
+    }
     val movieItr = moviesForUsers(userID).begin
-    for (count <- 1 to n) {
+    while (count <= n) {
       var currMovietoFactor: (MovieEntry, Double) = movieItr.next()
       while(!currMovietoFactor._1.genres.contains(genre) && movieItr.hasNext) {
         currMovietoFactor = movieItr.next()
       }
       if (movieItr.hasNext) {
-        nMovies :+= currMovietoFactor._1
-        println("1 -> " + currMovietoFactor._1.title + " genre " + currMovietoFactor._1.genres + " -> rating " + currMovietoFactor._2)
+        if(!nMovies.contains(currMovietoFactor._1)) {
+          nMovies :+= currMovietoFactor._1
+          count += 1
+          outp.println("UserId: " + userID + " -> Movie Title: " + currMovietoFactor._1.title + ", genre(s): " + currMovietoFactor._1.genres + " -> rating: " + currMovietoFactor._2)
+        }
+      } else {
+        println("Couldn't find enough movies for this genre (only " + count + "). Please consider reducing your n")
+        return nMovies
       }
     }
     nMovies
   }
+  outp.close()
 }
