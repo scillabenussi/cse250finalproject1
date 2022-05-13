@@ -8,17 +8,31 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 case class UserGenreRating(user: String, genre: String, ratingAvg: Double)
-
 class GenreBox extends Cardbox[UserGenreRating]((x,y) => x.user.compareTo(y.user))
+class MovieBox extends Cardbox[(MovieEntry,Double)]((x,y) => y._2.compareTo(x._2))
 
 object cse250Final extends App {
   val userTuple = UserReaders.readEntries
   val movies: mutable.ArrayBuffer[MovieEntry] = MovieReader.readMovies
   val userdatabase = userTuple._1
   val ratingsDatabase = userTuple._2
-  val ratingAvg = UserReaders.average(ratingsDatabase)
+  val r_m: mutable.Map[String, Double] = UserReaders.average(ratingsDatabase) //Map movie -> r_m
+  val r_gMap: mutable.Map[String, Double] = R_g
   val userBoxGen: GenreBox = U_g
   val prefBox: GenreBox = pref_fact
+  val moviesForUsers = mov_per_user_genre
+  /*for(user <- moviesForUsers.keys) {
+    var itr = moviesForUsers(user).begin
+    while (itr.hasNext) {
+      println(user + " -> " + itr.next()._2)
+    }
+  }*/
+  //val nMoviesForUser: ArrayBuffer[MovieEntry] = top_n("2","History", 10)
+  /*for(movies <- nMoviesForUser){
+    println("1 -> " + movies.title)
+  }*/
+
+
 
   def U_g: GenreBox = {
     val genreBox = new GenreBox
@@ -87,7 +101,7 @@ object cse250Final extends App {
     }
     genreBox
   }
-  def R_g: Map[String,Double] ={
+  def R_g: mutable.Map[String,Double] = {
     val users = userdatabase.begin
     var actionRating: List[Double] = List()
     var noirRating: List[Double] = List()
@@ -113,7 +127,7 @@ object cse250Final extends App {
         historyRating :+= movie_ratings.rating
       }
     }
-    val returnMap: Map[String,Double] = Map(("Action"->actionRating.sum/actionRating.length),("Nior"->noirRating.sum/noirRating.length),("Light"->lightRating.sum/lightRating.length),
+    val returnMap: mutable.Map[String,Double] = mutable.Map(("Action"->actionRating.sum/actionRating.length),("Noir"->noirRating.sum/noirRating.length),("Light"->lightRating.sum/lightRating.length),
       ("Serious"->seriousRating.sum/seriousRating.length),("Fantasy"->fantasyRating.sum/fantasyRating.length),("History"->historyRating.sum/historyRating.length))
     returnMap
 
@@ -122,19 +136,50 @@ object cse250Final extends App {
   def pref_fact: GenreBox = {
     val prefFactBox: GenreBox = new GenreBox //Output GenreBox
     val userGenItr = userBoxGen.begin //Iterator to input GenreBox
-    val r_g: Map[String, Double] = R_g
     while(userGenItr.hasNext){
       val currentUser: UserGenreRating = userGenItr.next()
-      val newGenreRating: UserGenreRating = UserGenreRating(currentUser.user, currentUser.genre, currentUser.ratingAvg/r_g(currentUser.genre))
+      val currGenre: String = currentUser.genre
+      val newGenreRating: UserGenreRating = UserGenreRating(currentUser.user, currGenre, currentUser.ratingAvg/r_gMap(currGenre))
       prefFactBox.insert(newGenreRating)
     }
     prefFactBox
   }
 
-  def top_n(n : Int): ArrayBuffer[MovieEntry] = {
-    var n_movies: ArrayBuffer[MovieEntry] = ArrayBuffer[MovieEntry]()
+  def mov_per_user_genre: mutable.Map[String,MovieBox] = {
+    val userToMovies: mutable.Map[String, MovieBox] = mutable.Map()
+    for (movieEntry <- movies) {
+      if (r_m.contains(movieEntry.index)) {
+        val rm: Double = r_m(movieEntry.index)
+        for (currGenre <- movieEntry.genres) {
+          val userWithGenre: List[UserGenreRating] = prefBox.toList.filter(_.genre == currGenre) //Review this for efficiency
+          for (user <- userWithGenre) {
+            val currUserID: String = user.user
+            val rm_x_pug: Double = rm * user.ratingAvg
+            if (userToMovies.contains(currUserID)) {
+              userToMovies(currUserID).insert((movieEntry, rm_x_pug))
+            } else {
+              userToMovies += (currUserID -> new MovieBox())
+            }
+          }
+        }
+      }
+    }
+    userToMovies
+  }
 
-
-    n_movies
+  def top_n(userID: String, genre: String, n : Int): ArrayBuffer[MovieEntry] = {
+    var nMovies: ArrayBuffer[MovieEntry] = new ArrayBuffer[MovieEntry]()
+    val movieItr = moviesForUsers(userID).begin
+    for (count <- 1 to n) {
+      var currMovietoFactor: (MovieEntry, Double) = movieItr.next()
+      while(!currMovietoFactor._1.genres.contains(genre) && movieItr.hasNext) {
+        currMovietoFactor = movieItr.next()
+      }
+      if (movieItr.hasNext) {
+        nMovies :+= currMovietoFactor._1
+        println("1 -> " + currMovietoFactor._1.title + " genre " + currMovietoFactor._1.genres + " -> rating " + currMovietoFactor._2)
+      }
+    }
+    nMovies
   }
 }
