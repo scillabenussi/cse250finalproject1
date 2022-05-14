@@ -36,6 +36,7 @@ object cse250Final extends App {
   }*/
 
   def U_g: GenreBox = {
+    println(3)
     val genreBox = new GenreBox
     val users = userdatabase.begin
     var currentUser = ""
@@ -100,16 +101,18 @@ object cse250Final extends App {
         }
       }
     }
+    println(2)
     genreBox
   }
   def R_g: mutable.Map[String,Double] = {
+    println(4)
     val users = userdatabase.begin
-    var actionRating: List[Double] = List()
-    var noirRating: List[Double] = List()
-    var lightRating: List[Double] = List()
-    var seriousRating: List[Double] = List()
-    var fantasyRating: List[Double] = List()
-    var historyRating: List[Double] = List()
+    var actionRating: ArrayBuffer[Double] = ArrayBuffer()
+    var noirRating:  ArrayBuffer[Double] = ArrayBuffer()
+    var lightRating:  ArrayBuffer[Double] = ArrayBuffer()
+    var seriousRating:  ArrayBuffer[Double] = ArrayBuffer()
+    var fantasyRating:  ArrayBuffer[Double] = ArrayBuffer()
+    var historyRating:  ArrayBuffer[Double] = ArrayBuffer()
     while(users.hasNext){
       val user = users.next()
       val movie_ratings = user.rated_movies
@@ -128,8 +131,10 @@ object cse250Final extends App {
         historyRating :+= movie_ratings.rating
       }
     }
+    println(5)
     val returnMap: mutable.Map[String,Double] = mutable.Map(("Action"->actionRating.sum/actionRating.length),("Noir"->noirRating.sum/noirRating.length),("Light"->lightRating.sum/lightRating.length),
       ("Serious"->seriousRating.sum/seriousRating.length),("Fantasy"->fantasyRating.sum/fantasyRating.length),("History"->historyRating.sum/historyRating.length))
+    println(1)
     returnMap
 
   }
