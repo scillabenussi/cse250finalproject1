@@ -27,35 +27,36 @@ object cse250Final extends App {
       println(user + " -> " + itr.next()._2)
     }
   }*/
-  val chosenUserId: String = "30"
-  val chosenGenre: String = "Light"
-  val chosenN: Int = 10
+  val chosenUserId: String = "30" //can choose a different user
+  val chosenGenre: String = "Light" //can choose a different genre
+  val chosenN: Int = 10 // can choose a different amount of movies
   val nMoviesForUser: ArrayBuffer[MovieEntry] = top_n(chosenUserId,chosenGenre,chosenN)
   /*for(movies <- nMoviesForUser){
     println("1 -> " + movies.title)
   }*/
 
+
   def U_g: GenreBox = {
-    println(3)
+
     val genreBox = new GenreBox
     val users = userdatabase.begin
     var currentUser = ""
-    var actionRating: List[Double] = List()
+    var actionRating: List[Double] = List() //lists to stor the ratings for each genre
     var noirRating: List[Double] = List()
     var lightRating: List[Double] = List()
     var seriousRating: List[Double] = List()
     var fantasyRating: List[Double] = List()
     var historyRating: List[Double] = List()
 
-    while (users.hasNext) {
+    while (users.hasNext) { //iterates through all of the users in the balboadll of the userDataBase
 
       val user = users.next()
       val user_id = user.user_id
       val movie_ratings = user.rated_movies
       val currentMovie = movies(movie_ratings.movie_id.toInt - 1)
 
-      if (user_id != currentUser) {
-        if (currentUser != "") {
+      if (user_id != currentUser) { // if the user switches
+        if (currentUser != "") { //inserts the ratings in the genreBox and calculates the average for each genre
           if (!actionRating.isEmpty) {
             genreBox.insert(UserGenreRating(currentUser, "Action", actionRating.sum / actionRating.length))
           }
@@ -76,7 +77,7 @@ object cse250Final extends App {
           }
         }
         currentUser = user_id
-        actionRating = List()
+        actionRating = List()// clear the list if the user switches
         noirRating = List()
         lightRating = List()
         seriousRating = List()
@@ -84,7 +85,7 @@ object cse250Final extends App {
         historyRating = List()
 
       }
-      for (genre <- currentMovie.genres) {
+      for (genre <- currentMovie.genres) { //else insert data into the lists of each genre
         if (genre == "Action") {
           actionRating :+= movie_ratings.rating
         } else if (genre == "Noir") {
@@ -101,11 +102,17 @@ object cse250Final extends App {
         }
       }
     }
-    println(2)
+
     genreBox
   }
+
+  /**
+   *
+   * @return denominator of the P_u,g
+   */
+
   def R_g: mutable.Map[String,Double] = {
-    println(4)
+
     val users = userdatabase.begin
     var actionRating: ArrayBuffer[Double] = ArrayBuffer()
     var noirRating:  ArrayBuffer[Double] = ArrayBuffer()
@@ -113,11 +120,11 @@ object cse250Final extends App {
     var seriousRating:  ArrayBuffer[Double] = ArrayBuffer()
     var fantasyRating:  ArrayBuffer[Double] = ArrayBuffer()
     var historyRating:  ArrayBuffer[Double] = ArrayBuffer()
-    while(users.hasNext){
+    while(users.hasNext){ //same as iterator for u_g
       val user = users.next()
       val movie_ratings = user.rated_movies
       val currentMovie = movies(movie_ratings.movie_id.toInt - 1)
-      if(currentMovie.genres.contains("Action")){
+      if(currentMovie.genres.contains("Action")){ // if the movie is the genre add it to the rating array
         actionRating :+= movie_ratings.rating
       }else if(currentMovie.genres.contains("Noir")){
         noirRating :+= movie_ratings.rating
@@ -131,15 +138,15 @@ object cse250Final extends App {
         historyRating :+= movie_ratings.rating
       }
     }
-    println(5)
+    //returnMap maps the genre to its average of all the users
     val returnMap: mutable.Map[String,Double] = mutable.Map(("Action"->actionRating.sum/actionRating.length),("Noir"->noirRating.sum/noirRating.length),("Light"->lightRating.sum/lightRating.length),
       ("Serious"->seriousRating.sum/seriousRating.length),("Fantasy"->fantasyRating.sum/fantasyRating.length),("History"->historyRating.sum/historyRating.length))
-    println(1)
     returnMap
 
   }
 
   def pref_fact: GenreBox = {
+
     val prefFactBox: GenreBox = new GenreBox //Output GenreBox
     val userGenItr = userBoxGen.begin //Iterator to input GenreBox
     while(userGenItr.hasNext){
@@ -148,6 +155,7 @@ object cse250Final extends App {
       val newGenreRating: UserGenreRating = UserGenreRating(currentUser.user, currGenre, currentUser.ratingAvg/r_gMap(currGenre))
       prefFactBox.insert(newGenreRating)
     }
+
     prefFactBox
   }
 
