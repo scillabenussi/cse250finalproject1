@@ -1,23 +1,6 @@
 File ProjectReportMMMNNN.txt for the report Section of Assignment 8, CSE250 Spring 2022
 
-for MovieBaseCL
-readMovies takes O(M) because it inserts the number of lines into the arrayBuffer and appending only takes O(1) plus
-creating the genreMap which is O(number of genres) which is negligible compared to number of movies.
-
-for UserBaseSb
-readEntries takes O(U+R) since it is a BALBOADLL.
-average takes O(R) because we are iterating through each rating in order to take the average.
-
-For cse250Final
-U_g takes Θ(U+R) it iterates through the Balboa from readEntries. And uses an already known index to get data from
-the array buffer from readMovies which is O(1)
-R_g takes Θ((U+R)M) because it does U_g M times.
-pref_fact takes Θ(U+R) because it iterates through U_g and the lookups are through a map which takes O(1).
-mov_per_user_genre takes Θ(UM+(U+R)M)  because it iterates through M U times and filters the list of readEntries from
-the userBase which is U+R elements.
-top_n is dependent on the user and worse case scenario is the if all the ratings are by a single user which is Θ(R)
-
-
+(a)
 4 choices:
 - For the UserBase we decided to use a BALBOADLL as CardBox to connect each user to his/hers array of movie ratings. It
 seemed the fastest data structure for both insertions and eventual lookups of the movie ratings.
@@ -35,3 +18,28 @@ readable and one line of code to find the genre of a movie.
 - For the MovieBase having readMovies create an ArrayBuffer of all the Movies made it for a quick and easy way to add movies in and since we
 knew the what the index was going to be as it was sorted by the movie id number, it was easy to search for the index
 with the data given by u.data.
+
+
+
+
+
+(b)
+for MovieBaseCL
+readMovies takes O(M) because it inserts the number of lines into the arrayBuffer and appending only takes O(1) plus
+creating the genreMap which is O(number of genres) which is negligible compared to number of movies.
+
+for UserBaseSb
+readEntries takes O(U+R) since it is a BALBOADLL.
+average takes O(R) because we are iterating through each rating in order to take the average.
+
+For cse250Final
+U_g takes Θ(U+R) it iterates through the Balboa from readEntries. And uses an already known index to get data from
+the array buffer from readMovies which is O(1)
+R_g takes Θ((U+R)M) because it does U_g M times.
+pref_fact takes Θ(U+R) because it iterates through U_g and the lookups are through a map which takes O(1).
+mov_per_user_genre takes Θ(UM+(U+R)M)  because it iterates through M U times and filters the list of readEntries from
+the userBase which is U+R elements.
+top_n is dependent on the user and worse case scenario is the if all the ratings are by a single user which is Θ(R).
+
+See lines 31 to 34 to understand how we want to use our data structure.
+

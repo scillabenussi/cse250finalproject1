@@ -35,7 +35,7 @@ object UserReaders {
       //Each line has the format <user_id> <movie_id> <rating> <unix timestamp>
       val lineArray = line.split("\\s+").filter(_.nonEmpty)
       user_id = lineArray(0)  //<user_id>
-      movie = lineArray(1).toString //<movie_id>
+      movie = lineArray(1) //<movie_id>
       rating = lineArray(2).toDouble //<rating>
       if(movie_to_ratings.contains(movie)){
         movie_to_ratings(movie) :+= rating

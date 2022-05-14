@@ -6,9 +6,10 @@
 import java.io.{FileWriter, PrintWriter}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.io.Source
 case class UserGenreRating(user: String, genre: String, ratingAvg: Double)
 class GenreBox extends Cardbox[UserGenreRating]((x,y) => x.user.compareTo(y.user))
-class MovieBox extends Cardbox[(MovieEntry,Double)]((x,y) => y._2.compareTo(x._2))
+class MovieBox extends Cardbox[(MovieEntry,Double)]((x,y) => y._2.compareTo(x._2)) //descending order so top movies are at the beginning of each array in the BALBOADLL
 
 object cse250Final extends App {
   val userTuple = UserReaders.readEntries
@@ -37,7 +38,6 @@ object cse250Final extends App {
 
 
   def U_g: GenreBox = {
-
     val genreBox = new GenreBox
     val users = userdatabase.begin
     var currentUser = ""
@@ -108,7 +108,8 @@ object cse250Final extends App {
 
   /**
    *
-   * @return denominator of the P_u,g
+   * @return denominator of the P_u,g (preference factor)
+   *
    */
 
   def R_g: mutable.Map[String,Double] = {
@@ -159,20 +160,24 @@ object cse250Final extends App {
     prefFactBox
   }
 
+  /**
+   *
+   * @return a Map from each user to all of the movies, ordered (thanks to the BALBOADLL) by preference factor
+   */
   def mov_per_user_genre: mutable.Map[String,MovieBox] = {
     val userToMovies: mutable.Map[String, MovieBox] = mutable.Map()
     for (movieEntry <- movies) {
       if (r_m.contains(movieEntry.index)) {
-        val rm: Double = r_m(movieEntry.index)
-        for (currGenre <- movieEntry.genres) {
-          val userWithGenre: List[UserGenreRating] = prefBox.toList.filter(_.genre == currGenre) //Review this for efficiency
-          for (user <- userWithGenre) {
+        val rm: Double = r_m(movieEntry.index) //finds r_m for that movie
+        for (currGenre <- movieEntry.genres) { //gets genres
+          val userWithGenre: List[UserGenreRating] = prefBox.toList.filter(_.genre == currGenre) //filters movies with that genre
+          for (user <- userWithGenre) { //iterates user
             val currUserID: String = user.user
-            val rm_x_pug: Double = rm * user.ratingAvg
+            val rm_x_pug: Double = rm * user.ratingAvg //calculates r_m * P_u,g
             if (userToMovies.contains(currUserID)) {
-              userToMovies(currUserID).insert((movieEntry, rm_x_pug))
+              userToMovies(currUserID).insert((movieEntry, rm_x_pug)) //inserts r_m * P_u,g in the BALBOADLL
             } else {
-              userToMovies += (currUserID -> new MovieBox())
+              userToMovies += (currUserID -> new MovieBox()) //if first movie
             }
           }
         }
@@ -181,6 +186,13 @@ object cse250Final extends App {
     userToMovies
   }
 
+  /**
+   *
+   * @param userID = chosen User
+   * @param genre = chosen Genre
+   * @param n = chosen number of movies
+   * @return the n movies that are most suitable for the genre @genre for the user @userID, prints result on output.txt file
+   */
   def top_n(userID: String, genre: String, n : Int): ArrayBuffer[MovieEntry] = {
     var nMovies: ArrayBuffer[MovieEntry] = new ArrayBuffer[MovieEntry]()
     var count = 1
@@ -192,16 +204,16 @@ object cse250Final extends App {
       println("Genre Not Found")
       return nMovies
     }
-    val movieItr = moviesForUsers(userID).begin
-    while (count <= n) {
+    val movieItr = moviesForUsers(userID).begin //Goes through the entire data structure created by the mov_per_user_genre method
+    while (count <= n) { //Until it inserts n movies
       var currMovietoFactor: (MovieEntry, Double) = movieItr.next()
-      while(!currMovietoFactor._1.genres.contains(genre) && movieItr.hasNext) {
+      while(!currMovietoFactor._1.genres.contains(genre) && movieItr.hasNext) { //filters genre
         currMovietoFactor = movieItr.next()
       }
       if (movieItr.hasNext) {
         if(!nMovies.contains(currMovietoFactor._1)) {
-          nMovies :+= currMovietoFactor._1
-          count += 1
+          nMovies :+= currMovietoFactor._1 //inserts movie
+          count += 1 //update count only if the movie is inserted
           outp.println("UserId: " + userID + " -> Movie Title: " + currMovietoFactor._1.title + ", genre(s): " + currMovietoFactor._1.genres + " -> rating: " + currMovietoFactor._2)
         }
       } else {
@@ -211,5 +223,5 @@ object cse250Final extends App {
     }
     nMovies
   }
-  outp.close()
+  outp.close() //close output file
 }
