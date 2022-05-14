@@ -6,7 +6,6 @@
 import java.io.{FileWriter, PrintWriter}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.io.Source
 case class UserGenreRating(user: String, genre: String, ratingAvg: Double)
 class GenreBox extends Cardbox[UserGenreRating]((x,y) => x.user.compareTo(y.user))
 class MovieBox extends Cardbox[(MovieEntry,Double)]((x,y) => y._2.compareTo(x._2))
@@ -35,8 +34,6 @@ object cse250Final extends App {
   /*for(movies <- nMoviesForUser){
     println("1 -> " + movies.title)
   }*/
-
-
 
   def U_g: GenreBox = {
     val genreBox = new GenreBox

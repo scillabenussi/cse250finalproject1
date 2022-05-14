@@ -1,12 +1,19 @@
 File ProjectReportMMMNNN.txt for the report Section of Assignment 8, CSE250 Spring 2022
 
 4 choices:
-- For the UserBase
-- For the UserBase
-- For the MovieBase
-We decided to use a map to make it for an easy lookup by key for the condensed list in genre. It made to code easily
+- For the UserBase we decided to use a BALBOADLL as CardBox to connect each user to his/hers array of movie ratings. It
+seemed the fastest data structure for both insertions and eventual lookups of the movie ratings.
+We also considered to use a HashTable, but there were too many User objects with the same user_id, since each user rated
+at least 20 movies, and we didn't know what function would have been efficient for an eventual casting of objects with
+same keys. We needed a data structure as a BALBOADLL to make sure that same user ids were connected to the same data structure
+containing movie ratings, so that the average for each genre could be calculated quickly.
+
+- For the UserBase we decided to use a Map to relate each movie to its r_m average, so the lookup for each movie's r_m is
+ fast (O(1)) when it's needed to calculate the preference factor.
+
+- For the MovieBase we decided to use a map to make it for an easy lookup by key for the condensed list in genre. It made to code easily
 readable and one line of code to find the genre of a movie.
-- For the MovieBase
-Having readMovies create an ArrayBuffer of all the Movies made it for a quick and easy way to add movies in and since we
+
+- For the MovieBase having readMovies create an ArrayBuffer of all the Movies made it for a quick and easy way to add movies in and since we
 knew the what the index was going to be as it was sorted by the movie id number, it was easy to search for the index
 with the data given by u.data.

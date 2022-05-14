@@ -46,7 +46,7 @@ object UserReaders {
       }
       val movie_rat = new Movie_ratings(movie,rating) //creates the Movie_ratings object
       val user = new User(user_id, movie_rat) //creates the User object
-      userbox.insert(user) //Inserts in the chosen Carbox
+      userbox.insert(user) //Inserts in the chosen Cardbox
       count+=1
     }
     println("I've inserted " + count+ " ratings") //Just to double check the 100000 ratings
@@ -63,18 +63,4 @@ object UserReaders {
     }
     av_movie_map //Returns the map
   }
-}
-
-/** Executable object to test the code */
-object UserBaseSB extends App {
-  val tuple = UserReaders.readEntries
-  var userdatabase = tuple._1
-  var movie_rating = tuple._2
-  /*for((keys,ratings)<-movie_rating){
-    println(ratings.toList)
-  }*/
-  val r_m_map = UserReaders.average(movie_rating)
-  /*for((key,av)<-r_m_map){
-    println(av)
-  }*/
 }
