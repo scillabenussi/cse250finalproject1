@@ -4,4 +4,9 @@ File ProjectReportMMMNNN.txt for the report Section of Assignment 8, CSE250 Spri
 - For the UserBase
 - For the UserBase
 - For the MovieBase
+We decided to use a map to make it for an easy lookup by key for the condensed list in genre. It made to code easily
+readable and one line of code to find the genre of a movie.
 - For the MovieBase
+Having readMovies create an ArrayBuffer of all the Movies made it for a quick and easy way to add movies in and since we
+knew the what the index was going to be as it was sorted by the movie id number, it was easy to search for the index
+with the data given by u.data.
